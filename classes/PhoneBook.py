@@ -30,7 +30,7 @@ class PhoneBook:
                 break
 
     def add_contact(self):
-        # Создаём сценарий для ввода информации по контакту
+        """Создать класс нового контакта и добавить его в справочник"""
 
         new_contact = Contact(
             name=input("Введите имя: "),
@@ -46,7 +46,28 @@ class PhoneBook:
             file.write(f"{new_contact.name}|{new_contact.surname}|{new_contact.patronymic}|"
                        f"{new_contact.organization}|{new_contact.work_number}|{new_contact.private_number}\n")
 
+    def get_contacts_1(self):
+        """Var. 1 - by one contact at a time"""
+        with open(self.__db_file, mode="r", encoding="utf-8") as file:
+            contacts_by_line = file.readlines()
+            for i_contact in contacts_by_line:
+                i_contact_strip = i_contact.strip("\n")
+                contact_list = i_contact_strip.split("|")
+
+                contact = Contact(contact_list[0], contact_list[1], contact_list[2],
+                                  contact_list[3], contact_list[4], contact_list[5])
+
+                print(contact, '\n')
+
+                # Сделать так, чтобы можно было путешествовать и взад, и вперёд -> через while
+                # user_choice = int(input("Следующий контакт - 1"))
+
+    def check_contact_line(self):
+        """Заглушка - ф-ция, если я захочу вводить ID-номера контактов"""
+        pass
+
 
 if __name__ == '__main__':
-    PhoneBook(DB_FILE).add_contact()
+    # PhoneBook(DB_FILE).add_contact()
+    PhoneBook(DB_FILE).get_contacts_1()
 

@@ -15,6 +15,10 @@ class Contact:
         self.__work_number = work_number
         self.__private_number = private_number
 
+    def __str__(self):
+        return f"Абонент: {self.surname} {self.name} {self.patronymic}, Организация: {self.organization}\n" \
+               f"Раб. телефон: {self.work_number}, Личный телефон: {self.private_number}"
+
     @property
     def name(self) -> str:
         return self.__name
