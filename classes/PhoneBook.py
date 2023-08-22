@@ -162,6 +162,9 @@ class PhoneBook:
                 else:
                     print("Неизвестная команда")
 
+    def change_contact(self):
+        ...
+
     def check_contact_line(self):
         """Заглушка - ф-ция, если я захочу вводить ID-номера контактов"""
         pass
