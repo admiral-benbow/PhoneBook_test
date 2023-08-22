@@ -71,10 +71,17 @@ class PhoneBook:
         )
 
         try:
+            with open(self.__db_file, mode="r", encoding="utf-8") as file:
+                last_contact_num = int(file.readlines()[-1].split("|")[0]) + 1
+        except (FileNotFoundError, FileExistsError):
+            print("Что-то пошло не так. Обратитесь к разработчику за дополнительной информацией, всё скоро починят!")
+            return
+
+        try:
             with open(self.__db_file, mode="a+", encoding="utf-8") as file:
-                file.write(f"{new_contact.name}|{new_contact.surname}|{new_contact.patronymic}|"
+                file.write(f"{last_contact_num}|{new_contact.name}|{new_contact.surname}|{new_contact.patronymic}|"
                            f"{new_contact.organization}|{new_contact.work_number}|{new_contact.private_number}\n")
-        except FileNotFoundError:
+        except (FileNotFoundError, FileExistsError):
             print("Что-то пошло не так. Обратитесь к разработчику за дополнительной информацией, всё скоро починят!")
 
     def get_contacts_one(self):
@@ -171,6 +178,6 @@ class PhoneBook:
 
 
 if __name__ == '__main__':
-    # PhoneBook(DB_FILE).add_contact()
+    PhoneBook(DB_FILE).add_contact()
     # PhoneBook(DB_FILE).get_contacts_one()
-    PhoneBook(DB_FILE).get_contacts_pages()
+    # PhoneBook(DB_FILE).get_contacts_pages()
