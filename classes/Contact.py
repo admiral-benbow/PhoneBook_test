@@ -24,7 +24,7 @@ class Contact:
         return self.__name
 
     @name.setter
-    def name(self, new_name) -> None:
+    def name(self, new_name: str) -> None:
         self.__name = new_name
 
     @property
@@ -32,7 +32,7 @@ class Contact:
         return self.__surname
 
     @surname.setter
-    def surname(self, new_surname) -> None:
+    def surname(self, new_surname: str) -> None:
         self.__surname = new_surname
 
     @property
@@ -40,7 +40,7 @@ class Contact:
         return self.__patronymic
 
     @patronymic.setter
-    def patronymic(self, new_patronymic) -> None:
+    def patronymic(self, new_patronymic: str) -> None:
         self.__patronymic = new_patronymic
 
     @property
@@ -48,7 +48,7 @@ class Contact:
         return self.__organization
 
     @organization.setter
-    def organization(self, new_organization) -> None:
+    def organization(self, new_organization: str) -> None:
         self.__organization = new_organization
 
     @property
@@ -56,7 +56,7 @@ class Contact:
         return self.__work_number
 
     @work_number.setter
-    def work_number(self, new_work_number) -> None:
+    def work_number(self, new_work_number: str) -> None:
         self.__work_number = new_work_number
 
     @property
@@ -64,22 +64,5 @@ class Contact:
         return self.__private_number
 
     @private_number.setter
-    def private_number(self, new_private_number) -> None:
+    def private_number(self, new_private_number: str) -> None:
         self.__private_number = new_private_number
-
-
-if __name__ == '__main__':
-
-    bubba = Contact(
-        name="Buba",
-        surname="Mngloa",
-        patronymic="Babammmbababa",
-        organization="Barbarians",
-        work_number="+79870787806",
-        private_number="+79374487806"
-    )
-
-    print(bubba.private_number)
-    print(bubba.name)
-    bubba.name = "Ilya Loginov"
-    print(bubba.name)

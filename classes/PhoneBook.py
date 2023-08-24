@@ -1,5 +1,7 @@
-from classes.Contact import Contact
+import re
 import os
+
+from classes.Contact import Contact
 
 
 project_folder = os.path.realpath("..")
@@ -14,6 +16,10 @@ class PhoneBook:
     def __init__(self, db_file: str):
         self.__db_file = db_file
 
+    @property
+    def db_file(self) -> str:
+        return self.__db_file
+
     def menu(self) -> None:
         """
         Вывод главного меню телефонного справочника в консоль
@@ -23,9 +29,10 @@ class PhoneBook:
             print("1 - Открыть контакты по одному\n"
                   "2 - Открыть контакты группой по страницам\n"
                   "3 - Добавить новый контакт\n"
-                  "0 - закончить работу")
+                  "4 - Найти контакт в справочнике\n"
+                  "0 - закончить работу\n")
 
-            user_choice = int(input(""))
+            user_choice = int(input("Ввод: "))
 
             if user_choice == 1:
                 self.get_contacts_one()
@@ -50,6 +57,8 @@ class PhoneBook:
             elif user_choice == 3:
                 self.add_contact()
                 print("Контакт добавлен!")
+            elif user_choice == 4:
+                self.find_contact()
             elif user_choice == 0:
                 print("Спасибо за использование справочника")
                 break
@@ -122,7 +131,7 @@ class PhoneBook:
                     if self.edit_contact(id_contact=id_contact):
                         continue_from_edited_contact = True
                         break
-                elif user_choice == 4:
+                elif user_choice == 5:
                     print("Возвращаемся в главное меню")
                     return
                 else:
@@ -149,8 +158,8 @@ class PhoneBook:
                     volume_cnt = 1
 
                 reformed_contact = i_contact.strip("\n").split("|")
-                contact = Contact(reformed_contact[0], reformed_contact[1], reformed_contact[2],
-                                  reformed_contact[3], reformed_contact[4], reformed_contact[5])
+                contact = Contact(reformed_contact[1], reformed_contact[2], reformed_contact[3],
+                                  reformed_contact[4], reformed_contact[5], reformed_contact[6])
                 if not contacts_pages_dict.get(page_cnt):
                     contacts_pages_dict[page_cnt] = []
                     contacts_pages_dict[page_cnt].append(contact)
@@ -217,13 +226,71 @@ class PhoneBook:
                 file.write(j_contact)
             return True
 
+    def find_contact(self):
+        finding_param_tuple = (None, "имя", "фамилию", "отчество", "организацию", "рабочий телефон", "личный телефон")
+        # Menu-part
+        print("Поиск по контактам. Выберете критерии для поиска (можно выбрать любое сочетание):\n"
+              "1 - по имени\n"
+              "2 - по фамилии\n"
+              "3 - по отчеству\n"
+              "4 - по организации\n"
+              "5 - по рабочему телефону\n"
+              "6 - по личному  телефону \n"
+              "7 - отмена. Вернуться назад\n")
+        user_choice = input("Ввод: ")
+
+        if user_choice.isdigit():
+            if user_choice == "7":
+                return
+            else:
+                choice_input_tuple = tuple(map(int, user_choice))
+                # (1, 2, 3)
+        else:
+            # exit finding
+            print("Incorrect command")
+            return
+
+        with open(self.db_file, mode="r", encoding="utf-8") as file:
+            all_contacts = file.readlines()
+
+        finding_params_list = []
+        for j_match in choice_input_tuple:
+            user_param_input = input(f"Введите {finding_param_tuple[j_match]} ").lower()
+            finding_params_list.append(user_param_input)
+            # Здесь мы получаем готовый список с тем, что предстоит искать
+
+        for i_contact in all_contacts:
+            a_contact_list = i_contact.strip("\n").split("|")
+            contact_class = Contact(
+                name=a_contact_list[1],
+                surname=a_contact_list[2],
+                patronymic=a_contact_list[3],
+                organization=a_contact_list[4],
+                work_number=a_contact_list[5],
+                private_number=a_contact_list[6],
+            )
+
+            # хорошо только на тот случай, если всё идёт по порядку!!!
+            for k_index, k_pattern in zip(choice_input_tuple, finding_params_list):
+                if k_index in (5, 6):
+                    # Нужно экранировать, когда +. Нельзя экранировать, когда нет +
+                    if "+" in k_pattern:
+                        re_pattern = f"\\{k_pattern}"
+                    else:
+                        re_pattern = f"{k_pattern}"
+                else:
+                    re_pattern = f"^{k_pattern.lower()}"
+
+                match = re.search(re_pattern, a_contact_list[k_index].lower())
+
+                if not match:
+                    break
+            else:
+                print(str(contact_class))
+
     def check_contact_line(self):
         """Заглушка - ф-ция, если я захочу вводить ID-номера контактов"""
         pass
-
-    @property
-    def db_file(self) -> str:
-        return self.__db_file
 
 
 if __name__ == '__main__':
