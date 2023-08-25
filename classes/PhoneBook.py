@@ -246,10 +246,10 @@ class PhoneBook:
         with open(self.db_file, mode="r", encoding="utf-8") as file:
             all_contacts = file.readlines()
             for i_contact in all_contacts:
-                if i_contact.split("|")[0] == id_contact:  # Here we detect the needed line by id
+                if i_contact.split("|")[0] == id_contact:
                     editing_contact_list = all_contacts[int(id_contact) - 1].split("|")
                     editing_contact_list[user_choice] = user_edit_input
-                    all_contacts[int(id_contact) - 1] = "|".join(editing_contact_list)  # the whole list is split!
+                    all_contacts[int(id_contact) - 1] = "|".join(editing_contact_list)
         with open(self.db_file, mode="w+", encoding="utf-8") as file:
             for j_contact in all_contacts:
                 file.write(j_contact)
@@ -278,9 +278,8 @@ class PhoneBook:
                 return
             else:
                 choice_input_tuple = tuple(map(int, user_choice))
-                # (1, 2, 3)
+
         else:
-            # exit finding
             print("Incorrect command")
             return
 
@@ -292,7 +291,6 @@ class PhoneBook:
             user_param_input = input(f"Введите {finding_param_tuple[j_match]} ").lower()
             print()
             finding_params_list.append(user_param_input)
-            # Здесь мы получаем готовый список с тем, что предстоит искать
 
         for i_contact in all_contacts:
             a_contact_list = i_contact.strip("\n").split("|")
@@ -326,9 +324,3 @@ class PhoneBook:
         if not at_least_one_found:
             print("Контактов с таким(и) параметром(ами) не найдено")
             print()
-
-
-if __name__ == '__main__':
-    PhoneBook(DB_FILE).add_contact()
-    # PhoneBook(DB_FILE).get_contacts_one()
-    # PhoneBook(DB_FILE).get_contacts_pages()

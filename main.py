@@ -8,7 +8,3 @@ DB_PATH = os.path.join(root_dir, "data_base.txt")
 if __name__ == '__main__':
     phonebook = PhoneBook(db_file=DB_PATH)
     phonebook.menu()
-
-
-# Notes:
-# Сделать проверку на пустое поле
