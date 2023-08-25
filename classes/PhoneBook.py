@@ -11,8 +11,9 @@ DB_FILE = os.path.join(project_folder, db_file_name)
 
 class PhoneBook:
     """
-    Класс, описывающий интерфейс для работы с телефонным справочником
+    Класс, описывающий интерфейс и функционал телефонного справочника
     """
+
     def __init__(self, db_file: str):
         self.__db_file = db_file
 
@@ -22,8 +23,9 @@ class PhoneBook:
 
     def menu(self) -> None:
         """
-        Вывод главного меню телефонного справочника в консоль
+        Вывод главного меню телефонного справочника в консоль, где вызываются все остальные методы класса
         """
+
         while True:
             print("Главное меню телефонного справочника. Выберете действие (введите цифру): ")
             print("1 - Открыть контакты по одному\n"
@@ -66,7 +68,7 @@ class PhoneBook:
                 print("Неизвестная команда. Введите действие (цифру) снова")
 
     def add_contact(self) -> None:
-        """Создание класса Contact, вытягивание из него информации и запись её в 'базу данных'.txt"""
+        """Добавление записи нового контакта в 'базу данных'.txt"""
 
         new_contact = Contact(
             name=input("Введите имя: "),
@@ -95,8 +97,9 @@ class PhoneBook:
         except (FileNotFoundError, FileExistsError):
             print("Что-то пошло не так. Обратитесь к разработчику за дополнительной информацией, всё скоро починят!")
 
-    def get_contacts_one(self):
-        """Интерфейс просмотра контактов по одному"""
+    def get_contacts_one(self) -> None:
+        """Метод для просмотра записей контактов по одному. Также на странице контакта переход к его редактированию"""
+
         continue_from_edited_contact = False
         while True:
 
@@ -141,6 +144,7 @@ class PhoneBook:
         """
         Выводит контакты из справочника в консоль в виде списка постранично
         Длина каждой страницы может регулироваться пользователем
+        :param length -> int - длина каждой страницы (по ум. 5)
         """
 
         with open(self.__db_file, mode="r", encoding="utf-8") as file:
@@ -191,8 +195,13 @@ class PhoneBook:
                 else:
                     print("Неизвестная команда")
 
-    def edit_contact(self, id_contact: str):
-        """"""
+    def edit_contact(self, id_contact: str) -> bool | None:
+        """
+        Метод для изменения записи контакта в базе данных
+        :param id_contact: str -> строковое представление уникального id контакта из "базы_данных".txt
+        :return: True, если контакт успешно изменён | None, если редактирования не произошло
+        """
+
         edit_contact_menu = (None, "Имя", "Фамилию", "Отчество", "Организацию", "Рабочий телефон", "Личный телефон")
         rus_suffixes = (None, "ое", "ую", "ое", "ую", "ый", "ый")
 
@@ -226,7 +235,9 @@ class PhoneBook:
                 file.write(j_contact)
             return True
 
-    def find_contact(self):
+    def find_contact(self) -> None:
+        """Поиск по контактам в "базе_данных".txt по одному или нескольким (до всех) критериям"""
+
         finding_param_tuple = (None, "имя", "фамилию", "отчество", "организацию", "рабочий телефон", "личный телефон")
         # Menu-part
         print("Поиск по контактам. Выберете критерии для поиска (можно выбрать любое сочетание):\n"
@@ -270,10 +281,8 @@ class PhoneBook:
                 private_number=a_contact_list[6],
             )
 
-            # хорошо только на тот случай, если всё идёт по порядку!!!
             for k_index, k_pattern in zip(choice_input_tuple, finding_params_list):
                 if k_index in (5, 6):
-                    # Нужно экранировать, когда +. Нельзя экранировать, когда нет +
                     if "+" in k_pattern:
                         re_pattern = f"\\{k_pattern}"
                     else:
@@ -287,10 +296,6 @@ class PhoneBook:
                     break
             else:
                 print(str(contact_class))
-
-    def check_contact_line(self):
-        """Заглушка - ф-ция, если я захочу вводить ID-номера контактов"""
-        pass
 
 
 if __name__ == '__main__':
