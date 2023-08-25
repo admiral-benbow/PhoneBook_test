@@ -34,13 +34,21 @@ class PhoneBook:
                   "4 - Найти контакт в справочнике\n"
                   "0 - закончить работу\n")
 
-            user_choice = int(input("Ввод: "))
+            try:
+                user_choice = int(input("Ввод: "))
+                print()
+            except ValueError:
+                print("Неизвестная команда. Возврат к началу")
+                continue
 
             if user_choice == 1:
                 self.get_contacts_one()
 
             elif user_choice == 2:
-                user_page_choice = input("Желаете ли выбрать длину списка? По умолчанию - 5 (Y/N): ").lower()
+                user_page_choice = input("Желаете ли выбрать длину списка? По умолчанию длина - 5\n"
+                                         "Введите 'Y', чтобы выбрать самостоятельно,"
+                                         "'N' - чтобы оставить по умолчанию\n"
+                                         "Ввод: ").lower()
                 if user_page_choice == "y":
                     user_num_choice = input("Введите длину списка контактов на странице (больше 0): ")
                     try:
@@ -58,7 +66,6 @@ class PhoneBook:
 
             elif user_choice == 3:
                 self.add_contact()
-                print("Контакт добавлен!")
             elif user_choice == 4:
                 self.find_contact()
             elif user_choice == 0:
@@ -79,6 +86,7 @@ class PhoneBook:
             private_number=input("Введите личный номер: ")
 
         )
+        print()
 
         try:
             with open(self.__db_file, mode="r", encoding="utf-8") as file:
@@ -94,6 +102,7 @@ class PhoneBook:
             with open(self.__db_file, mode="a+", encoding="utf-8") as file:
                 file.write(f"{last_contact_num}|{new_contact.name}|{new_contact.surname}|{new_contact.patronymic}|"
                            f"{new_contact.organization}|{new_contact.work_number}|{new_contact.private_number}\n")
+                print("Контакт добавлен!\n")
         except (FileNotFoundError, FileExistsError):
             print("Что-то пошло не так. Обратитесь к разработчику за дополнительной информацией, всё скоро починят!")
 
@@ -119,7 +128,13 @@ class PhoneBook:
                                   contact_list[4], contact_list[5], contact_list[6])
 
                 print(contact, '\n')
-                user_choice = int(input("Далее - 1;\nНазад - 2;\nРедактирование - 3\nЗакончить - 4;\nВвод: "))
+                try:
+                    user_choice = int(input("Далее - 1;\nНазад - 2;\nРедактирование - 3\nЗакончить - 4;\nВвод: "))
+                    print()
+                except ValueError:
+                    print("Неверная команда. Возврат к началу выбора контактов по одному на страницу")
+                    continue
+
                 if user_choice == 1:
                     i_contact += 1
                     if i_contact == len(contacts_by_line):
@@ -134,7 +149,7 @@ class PhoneBook:
                     if self.edit_contact(id_contact=id_contact):
                         continue_from_edited_contact = True
                         break
-                elif user_choice == 5:
+                elif user_choice == 4:
                     print("Возвращаемся в главное меню")
                     return
                 else:
@@ -143,7 +158,7 @@ class PhoneBook:
     def get_contacts_pages(self, length: int = 5) -> None:
         """
         Выводит контакты из справочника в консоль в виде списка постранично
-        Длина каждой страницы может регулироваться пользователем
+        Длина каждой страницы может регулироваться пользователем.
         :param length -> int - длина каждой страницы (по ум. 5)
         """
 
@@ -214,7 +229,12 @@ class PhoneBook:
                   f"5 - {edit_contact_menu[5]}\n"
                   f"6 - {edit_contact_menu[6]}\n"
                   f"7 - Отмена")
-            user_choice = int(input("Ваш ввод: "))
+            try:
+                user_choice = int(input("Ваш ввод: "))
+            except ValueError:
+                print("Неизвестная команда. Попробуйте снова")
+                continue
+
             if user_choice in range(1, 7):
                 break
             elif user_choice == 7:
@@ -239,8 +259,10 @@ class PhoneBook:
         """Поиск по контактам в "базе_данных".txt по одному или нескольким (до всех) критериям"""
 
         finding_param_tuple = (None, "имя", "фамилию", "отчество", "организацию", "рабочий телефон", "личный телефон")
+        at_least_one_found = False
         # Menu-part
-        print("Поиск по контактам. Выберете критерии для поиска (можно выбрать любое сочетание):\n"
+        print("Поиск по контактам. Введите комбинацию цифр для поиска контактов\n"
+              "Можно выбрать любое сочетание (одна или несколько цифр):\n"
               "1 - по имени\n"
               "2 - по фамилии\n"
               "3 - по отчеству\n"
@@ -248,6 +270,7 @@ class PhoneBook:
               "5 - по рабочему телефону\n"
               "6 - по личному  телефону \n"
               "7 - отмена. Вернуться назад\n")
+
         user_choice = input("Ввод: ")
 
         if user_choice.isdigit():
@@ -267,6 +290,7 @@ class PhoneBook:
         finding_params_list = []
         for j_match in choice_input_tuple:
             user_param_input = input(f"Введите {finding_param_tuple[j_match]} ").lower()
+            print()
             finding_params_list.append(user_param_input)
             # Здесь мы получаем готовый список с тем, что предстоит искать
 
@@ -296,6 +320,12 @@ class PhoneBook:
                     break
             else:
                 print(str(contact_class))
+                print()
+                at_least_one_found = True
+
+        if not at_least_one_found:
+            print("Контактов с таким(и) параметром(ами) не найдено")
+            print()
 
 
 if __name__ == '__main__':
